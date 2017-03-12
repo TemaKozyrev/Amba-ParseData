@@ -1,0 +1,20 @@
+{
+  "name": "FastTech-Parse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TemaKozyrev/Amba-ParseData.git"
+  },
+  "author": "TemaKozyrev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TemaKozyrev/Amba-ParseData/issues"
+  },
+  "homepage": "https://github.com/TemaKozyrev/Amba-ParseData#readme"
+}
