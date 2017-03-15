@@ -20,7 +20,8 @@ var parsePage = function (data, callback) {
             data.d.Products.forEach(function (prod) {
                 result.Products.push(prod.SKU)
             });
-            callback({'file': ('tmp/' + data.d.CategoryID + "/Page" + data.d.CurrentPageIndex + '.json'), 'data': result})
+            // callback({'file': ('tmp/' + data.d.CategoryID + "/Page" + data.d.CurrentPageIndex + '.json'), 'data': result})
+            callback({'category': data.d.CategoryID, data: result})
         }
     }
 };

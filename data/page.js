@@ -6,6 +6,7 @@ var request = require('request');
 var parsePage = require('../parse/page');
 var jsonfile = require('jsonfile');
 var winston = require('winston');
+var makeProductTask = require('./product');
 
 var getPageData = async.queue(function (task, callback) {
     request(task.url, function (err, res, body) {
@@ -13,7 +14,7 @@ var getPageData = async.queue(function (task, callback) {
             if (resultPage.error)
                 winston.log('error', resultPage.error + ': ' + task.url);
             else
-                jsonfile.writeFile(resultPage.file, resultPage.data)
+                makeProductTask(resultPage.data)
         });
         callback();
     })
