@@ -4,6 +4,24 @@
 var winston = require('winston');
 var fs = require('fs');
 
+var parseDescString = function (str) {
+    var result = [];
+    var tmp = str.split("<li>");
+    for (var i = 1; i < tmp.length; i++) {
+        result.push(tmp[i].split("<\/li>")[0]);
+    }
+    return result;
+};
+
+var parseSpecString = function(str) {
+    var result = {};
+    var tmp = str.split("<li><b>");
+    for (var i = 1; i < tmp.length; i++) {
+        result[tmp[i].split("<\/b>: ")[0].trim()] = tmp[i].split("<\/b>: ")[1].split("<\/li>")[0].trim();
+    }
+    return result;
+};
+
 var parseProduct = function (category, data, callback) {
     if (data === undefined)
         callback({'error': 'undefined data'});
@@ -21,8 +39,8 @@ var parseProduct = function (category, data, callback) {
                 "Name": data.d.Products[0].Name,
                 "Tagline": data.d.Products[0].Tagline,
                 "OptionName": data.d.Products[0].OptionName,
-                "Desc": data.d.Products[0].Descriptions,
-                "Spec": data.d.Products[0].Specifications,
+                "Desc": parseDescString(data.d.Products[0].Descriptions),
+                "Spec": parseSpecString(data.d.Products[0].Specifications),
                 "RelatedProducts": []
             };
             if (data.d.Products[0].RelatedProducts != null)
