@@ -6,27 +6,43 @@ var request = require('request');
 var jsonfile = require('jsonfile');
 var winston = require('winston');
 var parseProduct = require('../parse/product');
+var save = require('../models/save');
 
 var getProductData = async.queue(function (task, callback) {
     request(task.url, function (err, res, body) {
         parseProduct(task.category, body, function (resultProduct) {
-            if (resultProduct.error)
+            if (resultProduct.error) {
                 winston.log('error', resultProduct.error + ': ' + task.url);
+                callback();
+            }
             else
-                jsonfile.writeFile(resultProduct.file, resultProduct.data)
+                save(resultProduct, function(err) {
+                    if (err)
+                        winston.log('error', err)
+                    callback()
+                })
         });
-        callback()
     })
-}, 5);
+}, 1);
 
-function makeProductTask(page) {
-    for (var i = 0; i < page.Products.length; i++) {
+function makeProductTask(page, callback) {
+    // for (var i = 0; i < page.Products.length; i++) {
+    //     getProductData.push({
+    //         url: 'https://www.fasttech.net/support/ws/API.ashx?get=products&CategoryID=-1&API=1&SKU='
+    //         + page.Products[i] + '&PageIndex=-1&SearchKeywords=&Filters=&SortOption=',
+    //         category: page.CategoryID
+    //     })
+    // }
+    async.forEachOf(page.Products, function (item, key, callback) {
         getProductData.push({
             url: 'https://www.fasttech.net/support/ws/API.ashx?get=products&CategoryID=-1&API=1&SKU='
-            + page.Products[i] + '&PageIndex=-1&SearchKeywords=&Filters=&SortOption=',
+            + item + '&PageIndex=-1&SearchKeywords=&Filters=&SortOption=',
             category: page.CategoryID
-        })
-    }
+        });
+        callback();
+    }, function (err) {
+        callback();
+    })
 }
 
 module.exports = makeProductTask;

@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var productSchema = new Schema({
-    SKU: Number,
+    sku: String,
     name: String,
     tagline: String,
     optionName: String,
@@ -18,16 +18,16 @@ var productSchema = new Schema({
         },
         value: String
     }],
-    spec: [{type: String, value: String}],
-    relatedProducts: [{SKU: String}]
+    spec: [{name: String, value: String}],
+    relatedProducts: [{sku: String}]
 
 });
 
 var categorySchema = new Schema({
+    sku: String,
     name: String,
     shortName: String,
-    products: [productSchema],
-    filters: [{name: String}]
+    products: [productSchema]
 });
 
 module.exports = mongoose.model('Category', categorySchema);

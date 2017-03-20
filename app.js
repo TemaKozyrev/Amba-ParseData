@@ -8,6 +8,8 @@ var winston = require('winston');
 var makePageTask = require('./data/page');
 var getCategory = require('./data/category');
 
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://tema:tema@ds141209.mlab.com:41209/amba');
 
 async.waterfall([
     getCategory,
