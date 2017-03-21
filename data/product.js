@@ -26,13 +26,6 @@ var getProductData = async.queue(function (task, callback) {
 }, 1);
 
 function makeProductTask(page, callback) {
-    // for (var i = 0; i < page.Products.length; i++) {
-    //     getProductData.push({
-    //         url: 'https://www.fasttech.net/support/ws/API.ashx?get=products&CategoryID=-1&API=1&SKU='
-    //         + page.Products[i] + '&PageIndex=-1&SearchKeywords=&Filters=&SortOption=',
-    //         category: page.CategoryID
-    //     })
-    // }
     async.forEachOf(page.Products, function (item, key, callback) {
         getProductData.push({
             url: 'https://www.fasttech.net/support/ws/API.ashx?get=products&CategoryID=-1&API=1&SKU='

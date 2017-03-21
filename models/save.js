@@ -7,7 +7,15 @@ function save(data, callback) {
     async.waterfall([
         async.apply(createData, data),
         collectProductFilters,
-        saveData
+        function (prod, cat, callback) {
+            cat.products.push(prod);
+            callback(null, cat);
+        },
+        function (cat) {
+            cat.save(function (err) {
+                callback(null);
+            });
+        }
     ], function (err, result) {
         if (err)
             callback(err.err);
@@ -22,12 +30,6 @@ function createData(data, callback) {
     })
 }
 
-function saveData(prod, cat, callback) {
-    cat.products.push(prod);
-    cat.save();
-    callback(null);
-}
-
 function collectProductFilters(prod, category, callback) {
     Category.findOne({ 'products.sku': prod.sku }, { 'products.$': 1 }, function (err, cat) {
         if (cat != null)
@@ -38,11 +40,13 @@ function collectProductFilters(prod, category, callback) {
                     if (filter == null) {
                         filter = new Filter({ '_catId': category._id, 'name': item.name });
                         prod.filters.push({ '_filterId': filter._id, value: item.value });
-                        filter.save();
+                        filter.save(function (err) {
+                            callback();
+                        });
                     } else {
                         prod.filters.push({ '_filterId': filter._id, value: item.value });
+                        callback();
                     };
-                    callback();
                 })
             }, function (err) {
                 callback(null, prod, category)
