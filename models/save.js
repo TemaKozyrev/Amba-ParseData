@@ -31,28 +31,31 @@ function createData(data, callback) {
 }
 
 function collectProductFilters(prod, category, callback) {
-    Category.findOne({ 'products.sku': prod.sku }, { 'products.$': 1 }, function (err, cat) {
-        if (cat != null)
-            callback({ err: 'exsist product' })
-        else {
-            async.forEachOf(prod.spec, function (item, key, callback) {
-                Filter.findOne({ '_catId': category._id, 'name': item.name }, function (err, filter) {
-                    if (filter == null) {
-                        filter = new Filter({ '_catId': category._id, 'name': item.name });
-                        prod.filters.push({ '_filterId': filter._id, value: item.value });
-                        filter.save(function (err) {
+    if (category._id == undefined || category._id == null) 
+        callback({err: 'undefined category _id'})
+    else 
+        Category.findOne({ 'products.sku': prod.sku }, { 'products.$': 1 }, function (err, cat) {
+            if (cat != null)
+                callback({ err: 'exsist product' })
+            else {
+                async.forEachOf(prod.spec, function (item, key, callback) {
+                    Filter.findOne({ '_catId': category._id, 'name': item.name }, function (err, filter) {
+                        if (filter == null) {
+                            filter = new Filter({ '_catId': category._id, 'name': item.name });
+                            prod.filters.push({ '_filterId': filter._id, value: item.value });
+                            filter.save(function (err) {
+                                callback();
+                            });
+                        } else {
+                            prod.filters.push({ '_filterId': filter._id, value: item.value });
                             callback();
-                        });
-                    } else {
-                        prod.filters.push({ '_filterId': filter._id, value: item.value });
-                        callback();
-                    };
+                        };
+                    })
+                }, function (err) {
+                    callback(null, prod, category)
                 })
-            }, function (err) {
-                callback(null, prod, category)
-            })
-        }
-    })
-}
+            }
+        })
+    }
 
 module.exports = save;
