@@ -4,7 +4,7 @@
 var parseCategory = function (data, callback) {
     var category = [];
     data.d.ShortName.forEach(function (item, i) {
-        category.push({"ShortName": item, "ID": data.d.ID[i], "ProductCount": data.d.ProductCount[i]})
+        category.push({"name": item, "sku": data.d.ID[i], "ProductCount": data.d.ProductCount[i]})
     });
     callback(category);
 };
